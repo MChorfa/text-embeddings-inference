@@ -1,0 +1,39 @@
+version: "3.9"
+# see: https://github.com/compose-spec/compose-spec/blob/master/spec.md#using-extensions-as-fragments
+x-logging: &default-logging
+  options:
+    max-size: "12m"
+    max-file: "5"
+  driver: json-file
+###############################################################
+# Networks
+###############################################################
+networks:
+  embedding_api_network:
+    name: embedding_api_network
+###############################################################
+# Volumes
+###############################################################
+volumes:
+  embedding-api:
+
+###############################################################
+# Services
+###############################################################
+services:
+  ############################################## embedding_api ##############################################
+  embedding_api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: embedding_api
+    hostname: embedding_api
+    restart: unless-stopped
+    logging: *default-logging
+    ports:
+      - 8080:8080
+    volumes:
+      - embedding-api:/data
+    networks:
+      - embedding_api_network
+  ############################################## embedding_api ##############################################
